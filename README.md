@@ -2,6 +2,8 @@
 
 Production-ready Telegram giveaway management bot built with **Python 3.11+, aiogram 3.x, aiosqlite, dotenv**.
 
+JOIN MY CHANNEL ON TELEGRAM :- https://t.me/+Imyf3M9TO5k1ODRl GIVEAWAY BOT CODES , TG ID , FF ID , TG PREMIUM GIVEAWAYS 
+
 ## Features
 - Full start menu with inline controls
 - New Giveaway FSM (title, channel verification, mode)
@@ -36,4 +38,5 @@ python main.py
 
 
 
-![Madara Image](https://files.catbox.moe/a4jvgt.jpg)
+![Madara Image](https://files.catbox.moe/kxc7pw.png)
+![MY NETWORK_Image](https://files.catbox.moe/hok60h.png)
