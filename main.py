@@ -47,7 +47,15 @@ async def main() -> None:
     setup_logging(settings.log_level)
     bot = Bot(settings.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp, _ = await build_dispatcher(settings)
-    await dp.start_polling(bot)
+    await dp.start_polling(
+        bot,
+        allowed_updates=[
+            "message",
+            "callback_query",
+            "chat_member",
+            "my_chat_member",
+        ],
+    )
 
 
 if __name__ == "__main__":
