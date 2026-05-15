@@ -1,65 +1,160 @@
+from __future__ import annotations
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from utils.fonts import btn
 
+
+# ── Main Menu ──────────────────────────────────────────────────────────────────
 def main_menu_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="🎁 New Giveaway", callback_data="menu:new_giveaway")],
-            [InlineKeyboardButton(text="🎁 My Giveaways", callback_data="menu:my_giveaways")],
-            [InlineKeyboardButton(text="📖 How To Use", callback_data="menu:how_to_use")],
-            [InlineKeyboardButton(text="➕ Add Channel", callback_data="menu:add_channel")],
-            [InlineKeyboardButton(text="➕ Add Group", callback_data="menu:add_group")],
-            [InlineKeyboardButton(text="💖 Donate", callback_data="menu:donate")],
-            [InlineKeyboardButton(text="📝 Create Post", callback_data="menu:create_post")],
-        ]
-    )
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=btn("🎁 New Giveaway"), callback_data="menu:new_giveaway"),
+            InlineKeyboardButton(text=btn("📋 My Giveaways"), callback_data="menu:my_giveaways"),
+        ],
+        [
+            InlineKeyboardButton(text=btn("➕ Add Channel"), callback_data="menu:add_channel"),
+            InlineKeyboardButton(text=btn("📝 Create Post"), callback_data="menu:create_post"),
+        ],
+        [
+            InlineKeyboardButton(text=btn("📖 How To Use"), callback_data="menu:how_to_use"),
+            InlineKeyboardButton(text=btn("💖 Donate"), callback_data="menu:donate"),
+        ],
+        [InlineKeyboardButton(text=btn("🆘 Support"), callback_data="menu:support")],
+    ])
+
+
+def back_to_menu_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn("🔙 Main Menu"), callback_data="menu:root")],
+    ])
+
+
+# ── Giveaway Creation ──────────────────────────────────────────────────────────
+def giveaway_type_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn("🗳 Voting Contest"), callback_data="newg:type:voting")],
+        [InlineKeyboardButton(text=btn("🎰 Lucky Draw"), callback_data="newg:type:lucky")],
+        [InlineKeyboardButton(text=btn("🔙 Cancel"), callback_data="menu:root")],
+    ])
 
 
 def giveaway_mode_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="💰 Paid Mode", callback_data="newg:mode:paid")],
-            [InlineKeyboardButton(text="🎁 Non-Paid Mode", callback_data="newg:mode:free")],
-        ]
-    )
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn("🆓 Free Mode"), callback_data="newg:mode:free")],
+        [InlineKeyboardButton(text=btn("💰 Paid Mode (UPI/QR)"), callback_data="newg:mode:paid")],
+        [InlineKeyboardButton(text=btn("⭐ Stars Mode"), callback_data="newg:mode:stars")],
+        [InlineKeyboardButton(text=btn("🔙 Back"), callback_data="newg:back:type")],
+    ])
 
 
-def manage_giveaway_kb(giveaway_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="🏆 Leaderboard", callback_data=f"giveaway:leaderboard:{giveaway_id}")],
-            [InlineKeyboardButton(text="🛑 Stop Paid Votes", callback_data=f"giveaway:stop_paid:{giveaway_id}")],
-            [InlineKeyboardButton(text="🛑 Stop Participation", callback_data=f"giveaway:stop_part:{giveaway_id}")],
-            [InlineKeyboardButton(text="🔚 End Giveaway", callback_data=f"giveaway:end:{giveaway_id}")],
-            [InlineKeyboardButton(text="🗑 Clear Channel Posts", callback_data=f"giveaway:clear_posts:{giveaway_id}")],
-            [InlineKeyboardButton(text="🔙 Back", callback_data="menu:root")],
-        ]
-    )
+def referral_setup_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn("✅ Enable Referral Bonus"), callback_data="newg:referral:yes")],
+        [InlineKeyboardButton(text=btn("❌ No Referral"), callback_data="newg:referral:no")],
+    ])
 
 
-def participation_kb(giveaway_id: int, paid_enabled: bool) -> InlineKeyboardMarkup:
+def skip_kb(callback_data: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn("⏭ Skip"), callback_data=callback_data)],
+    ])
+
+
+# ── Manage Giveaway ────────────────────────────────────────────────────────────
+def manage_giveaway_kb(giveaway_id: int, giveaway_type: str = "voting", paid: bool = True, referral: bool = False) -> InlineKeyboardMarkup:
     rows = [
-        [InlineKeyboardButton(text="📋 Copy Vote Link", callback_data=f"giveaway:copy_link:{giveaway_id}")],
-        [InlineKeyboardButton(text="🏆 Leaderboard", callback_data=f"giveaway:leaderboard:{giveaway_id}")],
-        [InlineKeyboardButton(text="🔁 Get Links Again", callback_data=f"giveaway:copy_link:{giveaway_id}")],
+        [InlineKeyboardButton(text=btn("🏆 Leaderboard"), callback_data=f"giveaway:leaderboard:{giveaway_id}")],
+        [InlineKeyboardButton(text=btn("📊 Stats"), callback_data=f"giveaway:stats:{giveaway_id}")],
+    ]
+    if paid:
+        rows.append([InlineKeyboardButton(text=btn("🛑 Stop Paid Votes"), callback_data=f"giveaway:stop_paid:{giveaway_id}")])
+    rows.append([InlineKeyboardButton(text=btn("🔒 Stop Participation"), callback_data=f"giveaway:stop_part:{giveaway_id}")])
+    if referral:
+        rows.append([InlineKeyboardButton(text=btn("🔗 Toggle Referral"), callback_data=f"giveaway:toggle_ref:{giveaway_id}")])
+    rows.append([InlineKeyboardButton(text=btn("🗑 Clear Channel Posts"), callback_data=f"giveaway:clear_posts:{giveaway_id}")])
+    rows.append([InlineKeyboardButton(text=btn("🏁 End Giveaway"), callback_data=f"giveaway:end:{giveaway_id}")])
+    rows.append([InlineKeyboardButton(text=btn("🔙 Main Menu"), callback_data="menu:root")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def my_giveaways_kb(giveaways: list[dict]) -> InlineKeyboardMarkup:
+    rows = []
+    for g in giveaways:
+        icon = "🗳" if g["giveaway_type"] == "voting" else "🎰"
+        label = btn(f"{icon} {g['title'][:30]}")
+        rows.append([InlineKeyboardButton(text=label, callback_data=f"giveaway:manage:{g['id']}")])
+    rows.append([InlineKeyboardButton(text=btn("🔙 Main Menu"), callback_data="menu:root")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def end_confirm_kb(giveaway_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=btn("✅ Yes, End It"), callback_data=f"giveaway:end_confirm:{giveaway_id}"),
+            InlineKeyboardButton(text=btn("❌ Cancel"), callback_data=f"giveaway:manage:{giveaway_id}"),
+        ],
+    ])
+
+
+# ── Participation ──────────────────────────────────────────────────────────────
+def participation_kb(giveaway_id: int, paid_enabled: bool, referral_enabled: bool) -> InlineKeyboardMarkup:
+    rows = [
+        [InlineKeyboardButton(text=btn("📋 Copy My Vote Link"), callback_data=f"giveaway:copy_link:{giveaway_id}")],
+        [InlineKeyboardButton(text=btn("🏆 Live Leaderboard"), callback_data=f"giveaway:leaderboard:{giveaway_id}")],
     ]
     if paid_enabled:
-        rows.insert(1, [InlineKeyboardButton(text="💰 Buy Paid Votes", callback_data=f"payment:start:{giveaway_id}")])
+        rows.insert(1, [InlineKeyboardButton(text=btn("💰 Buy Extra Votes"), callback_data=f"payment:start:{giveaway_id}")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 def participant_vote_kb(giveaway_id: int, participant_id: int, count: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text=f"🗳 Vote ({count})", callback_data=f"vote:{giveaway_id}:{participant_id}")]
-        ]
-    )
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn(f"🗳 Vote ({count})"), callback_data=f"vote:{giveaway_id}:{participant_id}")],
+    ])
 
 
+# ── Payment ────────────────────────────────────────────────────────────────────
 def payment_mode_kb(giveaway_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="💵 Money Paid", callback_data=f"payment:mode:money:{giveaway_id}")],
-            [InlineKeyboardButton(text="⭐ Stars Paid", callback_data=f"payment:mode:stars:{giveaway_id}")],
-        ]
-    )
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn("💵 UPI / Money"), callback_data=f"payment:mode:money:{giveaway_id}")],
+        [InlineKeyboardButton(text=btn("⭐ Telegram Stars"), callback_data=f"payment:mode:stars:{giveaway_id}")],
+        [InlineKeyboardButton(text=btn("🔙 Back"), callback_data=f"giveaway:copy_link:{giveaway_id}")],
+    ])
+
+
+def payment_review_kb(payment_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=btn("✅ Approve"), callback_data=f"payment:approve:{payment_id}"),
+            InlineKeyboardButton(text=btn("❌ Deny"), callback_data=f"payment:deny:{payment_id}"),
+        ],
+    ])
+
+
+# ── Admin Panel ────────────────────────────────────────────────────────────────
+def admin_panel_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=btn("📊 Bot Stats"), callback_data="admin:stats"),
+            InlineKeyboardButton(text=btn("📢 Broadcast"), callback_data="admin:broadcast"),
+        ],
+        [
+            InlineKeyboardButton(text=btn("👤 User Info"), callback_data="admin:userinfo"),
+            InlineKeyboardButton(text=btn("🚫 Ban User"), callback_data="admin:ban"),
+        ],
+        [
+            InlineKeyboardButton(text=btn("✅ Unban User"), callback_data="admin:unban"),
+            InlineKeyboardButton(text=btn("👑 Add Admin"), callback_data="admin:addadmin"),
+        ],
+        [InlineKeyboardButton(text=btn("🔙 Main Menu"), callback_data="menu:root")],
+    ])
+
+
+def broadcast_confirm_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=btn("✅ Send Broadcast"), callback_data="admin:broadcast_confirm"),
+            InlineKeyboardButton(text=btn("❌ Cancel"), callback_data="admin:broadcast_cancel"),
+        ],
+    ])
